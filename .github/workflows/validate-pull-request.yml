@@ -1,0 +1,29 @@
+name: Validate Pull Requests
+on:
+  pull_request:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Validate Solution
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies
+        env:
+          THCARE_KEY: ${{ secrets.THCARE_KEY }}
+        run: yarn install --mode=skip-build
+
+      - name: Build
+        run: yarn build
+
+      - name: Lint
+        run: yarn lint -- --max-warnings=0
+
+      # This can happen if a prisma migration was generated but not checked in
+      - name: Check for modified files
+        run: |
+          if [[ -n $(git status --short) ]]; then
+            echo "These files were modified during build. Check them in as part of your PR."
+            git status --short
+            false
+          fi

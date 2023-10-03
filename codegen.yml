@@ -1,0 +1,7 @@
+schema: schema.gql
+documents:
+  - src/**/*.{ts,tsx}
+generates:
+  src/generated/graphql/:
+    preset: client
+emitLegacyCommonJSImports: false
